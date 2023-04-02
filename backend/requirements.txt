@@ -11,4 +11,5 @@ requests~=2.26
 python-dotenv~=0.21
 Pillow~=8.3
 django-colorfield~=0.8
-drf_extra_fields
+drf_extra_fields~=3.4
+django-cors-headers~=3.11

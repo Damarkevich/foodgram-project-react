@@ -1,7 +1,8 @@
+from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
-from colorfield.fields import ColorField
 
 
 class Tag(models.Model):
@@ -74,7 +75,7 @@ class Recipe(models.Model):
         help_text='Enter recipe name'
     )
     image = models.ImageField(
-        upload_to='media/recipes/images/',
+        upload_to='recipes/images/',
         null=True,
         blank=True,
     )
@@ -91,7 +92,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeAndIngredient',
-#        help_text='Choose ingredients'
+        help_text='Choose ingredients'
     )
     pub_date = models.DateTimeField(
         verbose_name='Publication date',
@@ -108,7 +109,7 @@ class Recipe(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.author}'
 
     class Meta:
         ordering = ['-pub_date']
@@ -132,7 +133,11 @@ class RecipeAndIngredient(models.Model):
     )
 
     def __str__(self):
-        return f'Recipe - {self.recipe}, Ingredient - {self.ingredient}, Amount - {self.amount}'
+        return (
+            f'Recipe - {self.recipe}',
+            f'Ingredient - {self.ingredient}',
+            f'Amount - {self.amount}'
+        )
 
 
 class Follow(models.Model):
@@ -183,18 +188,18 @@ class Favorites(models.Model):
         ]
 
 
-class ShoppingCard(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='users_shoping_card',
-        verbose_name='Users shopping card',
+        related_name='users_shopping_cart',
+        verbose_name='Users shopping cart',
     )
 
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='shopping_card',
+        related_name='shopping_cart',
         verbose_name='Recipe',
     )
 
@@ -202,7 +207,6 @@ class ShoppingCard(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
-                name='author_recipe_shopping_card_unique'
+                name='author_recipe_shopping_cart_unique'
             ),
         ]
-

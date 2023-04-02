@@ -1,21 +1,32 @@
 from django_filters import rest_framework as filters
-from reviews.models import Title
+
+from recipes.models import Ingredient, Recipe, Tag
+
+BOOLEAN_CHOICES = ((0, 'False'), (1, 'True'),)
 
 
-class TitleFilter(filters.FilterSet):
+class IngredientFilter(filters.FilterSet):
     name = filters.CharFilter(
         field_name='name',
-        lookup_expr='icontains'
-    )
-    genre = filters.CharFilter(
-        field_name='genre__slug',
-        lookup_expr='icontains'
-    )
-    category = filters.CharFilter(
-        field_name='category__slug',
-        lookup_expr='icontains'
+        lookup_expr='istartswith'
     )
 
     class Meta:
-        model = Title
-        fields = ['name', 'year', 'genre', 'category']
+        model = Ingredient
+        fields = ['name']
+
+
+class RecipeFilter(filters.FilterSet):
+
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        to_field_name='slug',
+        queryset=Tag.objects.all(),
+    )
+
+    class Meta:
+        model = Recipe
+        fields = [
+            'author',
+            'tags',
+        ]
