@@ -3,7 +3,7 @@ from recipes.models import Recipe, RecipeAndIngredient, ShoppingCart
 
 
 def get_shopping_cart(user):
-    ingredient_list = [f'{user.username}` shopping cart.\n\n']
+    ingredient_list = [f'{user.username}`s shopping cart.\n\n']
     ingredient_dict = {}
     shopping_cart = ShoppingCart.objects.filter(user=user)
     for wanna_recipe in shopping_cart:

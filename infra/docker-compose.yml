@@ -13,7 +13,7 @@ services:
     image: damarkevich/foodgram_backend:latest
     restart: always
     volumes:
-      - foodgram_static:/backend/static_backend/
+      - foodgram_static:/backend/static/
       - foodgram_media:/backend/media/
     depends_on:
       - db
