@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-
 from recipes.models import Recipe, RecipeAndIngredient, ShoppingCart
 
 
@@ -14,10 +13,10 @@ def get_shopping_cart(user):
             ingredient_dict[
                 f'{ingredient.ingredient.name}'
                 f'({ingredient.ingredient.measurement_unit})'
-                ] = ingredient.amount + ingredient_dict.setdefault(
-                    f'{ingredient.ingredient.name}'
-                    f'({ingredient.ingredient.measurement_unit})', 0
-                    )
+            ] = ingredient.amount + ingredient_dict.setdefault(
+                f'{ingredient.ingredient.name}'
+                f'({ingredient.ingredient.measurement_unit})', 0
+            )
     for key, value in ingredient_dict.items():
         ingredient_list.append(f'{key} - {value}\n')
     content = ingredient_list

@@ -1,12 +1,11 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import (Favorites, Follow, Ingredient, Recipe,
+                            ShoppingCart, Tag)
 from rest_framework import generics, serializers, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from recipes.models import (Favorites, Follow, Ingredient, Recipe,
-                            ShoppingCart, Tag)
 from users.models import User
 
 from .filter import IngredientFilter, RecipeFilter
@@ -159,7 +158,7 @@ class SubscribeViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ShoppingCartAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    pagination_class = None 
+    pagination_class = None
 
     def post(self, request, pk):
         recipe = get_object_or_404(Recipe, id=pk)
