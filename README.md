@@ -1,6 +1,6 @@
-# Final training project: foodgram - а service where you can share your recipes and look for others..
+# Training project: foodgram - а service where everyone can share recipes.
 
-## Working progect can be found here:
+## Working project can be found here:
 http://158.160.49.18
 
 Admin panel: 
