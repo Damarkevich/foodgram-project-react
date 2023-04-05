@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from users.models import User
 
 from .filter import IngredientFilter, RecipeFilter
-from .permissions import IsOwnerOrReadOnly, Owner
+from .permissions import IsOwnerOrReadOnly, IsOwner
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
                           RecipeGetWithFavoriteSerializer, RecipeSerializer,
                           TagSerializer, UserGetForSubscribeSerializer)
@@ -145,7 +145,7 @@ class SubscribeAPIView(APIView):
 
 class SubscribeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserGetForSubscribeSerializer
-    permission_classes = [Owner]
+    permission_classes = [IsOwner]
 
     def get_queryset(self):
         user = self.request.user
@@ -185,7 +185,7 @@ class ShoppingCartAPIView(APIView):
 
 
 class ShoppingCartDownloadAPIView(APIView):
-    permission_classes = [Owner]
+    permission_classes = [IsOwner]
 
     def get(self, request):
         return get_shopping_cart(self.request.user)
