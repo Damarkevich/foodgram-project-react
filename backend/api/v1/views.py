@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from users.models import User
 
 from .filter import IngredientFilter, RecipeFilter
-from .permissions import IsOwnerOrReadOnly, IsOwner
+from .permissions import IsOwner, IsOwnerOrReadOnly
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
                           RecipeGetWithFavoriteSerializer, RecipeSerializer,
                           TagSerializer, UserGetForSubscribeSerializer)
