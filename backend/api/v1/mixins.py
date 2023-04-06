@@ -21,7 +21,9 @@ related_dict = {
 
 
 class CreateDeleteRelatedMixinView(
-    DestroyModelMixin, GenericAPIView, CreateModelMixin
+    DestroyModelMixin,
+    CreateModelMixin,
+    GenericAPIView,
 ):
     '''
     Universal MixinView with logic to create and destroy
