@@ -1,9 +1,9 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (IngredientViewSet, RecipeDetail, RecipeList,
-                    RecipeRelatedView, ShoppingCartDownloadAPIView,
-                    SubscribeViewSet, TagViewSet, UserRelatedView)
+from .views import (CreateDeleteRelatedMixinView, IngredientViewSet,
+                    RecipeDetail, RecipeList, ShoppingCartDownloadAPIView,
+                    SubscribeViewSet, TagViewSet)
 
 router_v1 = DefaultRouter()
 router_v1.register(r'tags', TagViewSet, basename='tags')
@@ -27,7 +27,10 @@ urlpatterns = [
     ),
     path(
         'recipes/<int:instance_id>/<str:related>/',
-        RecipeRelatedView.as_view()
+        CreateDeleteRelatedMixinView.as_view()
     ),
-    path('users/<int:instance_id>/<str:related>/', UserRelatedView.as_view()),
+    path(
+        'users/<int:instance_id>/<str:related>/',
+        CreateDeleteRelatedMixinView.as_view()
+    ),
 ]

@@ -1,18 +1,43 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import Follow, Ingredient, Recipe, Tag
-from rest_framework import generics, status, viewsets
+from recipes.models import (Favorites, Follow, Ingredient, Recipe,
+                            ShoppingCart, Tag)
+from rest_framework import generics, serializers, status, viewsets
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.models import User
 
 from .filter import IngredientFilter, RecipeFilter
-from .mixins import CreateDeleteRelatedMixinView
 from .permissions import IsOwner, IsOwnerOrReadOnly
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
-                          RecipeSerializer, TagSerializer,
+                          RecipeSerializer,
+                          RecipeShortRepresentationSerializer, TagSerializer,
                           UserGetForSubscribeSerializer)
 from .utils import get_shopping_cart
+
+related_dict = {
+    'favorite': (
+        Favorites,
+        'recipe',
+        Recipe.objects.all(),
+        RecipeShortRepresentationSerializer
+    ),
+    'shopping_cart': (
+        ShoppingCart,
+        'recipe',
+        Recipe.objects.all(),
+        RecipeShortRepresentationSerializer
+    ),
+    'subscribe': (
+        Follow,
+        'author',
+        User.objects.all(),
+        UserGetForSubscribeSerializer
+    ),
+}
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -113,20 +138,46 @@ class SubscribeViewSet(viewsets.ReadOnlyModelViewSet):
         return user_list
 
 
-class RecipeRelatedView(CreateDeleteRelatedMixinView):
+class CreateDeleteRelatedMixinView(
+    DestroyModelMixin,
+    CreateModelMixin,
+    GenericAPIView,
+):
     '''
-    View with logic to create and destroy related connection
-    (add to favorite or to shopping cart) for single recipe.
+    Universal MixinView with logic to create and destroy
+    related connections for a different models.
     '''
-    queryset = Recipe.objects.all()
+    permission_classes = (IsAuthenticated,)
 
+    def post(self, request, instance_id, related):
+        related_model, field_name, queryset, serializer = related_dict[related]
+        obj = get_object_or_404(queryset, id=instance_id)
+        user = self.request.user
+        if not related_model.objects.get_or_create(
+            user=user,
+            **{field_name: obj}
+        )[1]:
+            raise serializers.ValidationError(
+                f"The {field_name} has already been added to {related} list."
+            )
+        serializer = serializer(obj, context={'request': request})
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
-class UserRelatedView(CreateDeleteRelatedMixinView):
-    '''
-    View with logic to create and destroy related connection
-    (add to favorite) for single user.
-    '''
-    queryset = User.objects.all()
+    def delete(self, request, instance_id, related):
+        related_model, field_name, queryset, _ = related_dict[related]
+        obj = get_object_or_404(queryset, id=instance_id)
+        user = self.request.user
+        if not related_model.objects.filter(
+            user=user,
+            **{field_name: obj}
+        ).delete()[0]:
+            raise serializers.ValidationError(
+                f"The {field_name} is not in {related} list."
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ShoppingCartDownloadAPIView(APIView):
