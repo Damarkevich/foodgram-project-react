@@ -6,7 +6,7 @@ from rest_framework import serializers
 from users.models import User
 
 
-class RecipeGetWithFavoriteSerializer(serializers.ModelSerializer):
+class RecipeShortRepresentationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
@@ -14,31 +14,6 @@ class RecipeGetWithFavoriteSerializer(serializers.ModelSerializer):
             'name',
             'image',
             'cooking_time'
-        )
-
-
-class UserGetForSubscribeSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
-    recipes = RecipeGetWithFavoriteSerializer(many=True, read_only=True)
-    recipes_count = serializers.SerializerMethodField()
-
-    def get_is_subscribed(self, value):
-        return True
-
-    def get_recipes_count(self, value):
-        return Recipe.objects.filter(author=value).count()
-
-    class Meta:
-        model = User
-        fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'is_subscribed',
-            'recipes',
-            'recipes_count',
         )
 
 
@@ -63,6 +38,27 @@ class CustomUserSerializer(UserSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
+        )
+
+
+class UserGetForSubscribeSerializer(CustomUserSerializer):
+    recipes = RecipeShortRepresentationSerializer(many=True, read_only=True)
+    recipes_count = serializers.SerializerMethodField()
+
+    def get_recipes_count(self, value):
+        return Recipe.objects.filter(author=value).count()
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
         )
 
 
