@@ -1,17 +1,4 @@
-# Training project: foodgram - а service where everyone can share recipes.
-
-## Working project can be found here:
-http://158.160.49.18
-
-Admin panel: 
-http://158.160.49.18/admin/
-login:
-`superuser`
-password:
-`superuser`
-
-## GitHub Action status:
-![foodgaram workflow](https://github.com/damarkevich/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+# Training project: foodgram - а service where everyone can share recipes. Graduation work in Yandex Practicum Online School.
 
 ## Technologies used:
 Python3, Django Framework, Django Rest Framework, Postgresql, Djoser, JWT, docker, docker-compose, Nginx, GitHub Actions
@@ -26,7 +13,7 @@ On this service, users will be able to publish recipes, subscribe to publication
 The project is pack into a docker container.
 
 Separate frontend and backend containers are connected to each other via API.
-The API documentation is available at: http://158.160.49.18/api/docs/
+The API documentation is available at: `http://your_hostname/api/docs/`
 
 When uploading to GitHub, GitHub Actions starting: The project image is automatically collected and sent to the DockerHub. Next, this image is deploing and starting on the server.
 
